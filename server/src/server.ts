@@ -8,7 +8,9 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({
+    log: ['query']
+})
 
 app.get('/games', async (request, response) => {
     const games = await prisma.game.findMany({
@@ -27,7 +29,6 @@ app.get('/games', async (request, response) => {
 app.post('/games/:id/ads', async (request, response) => {
     const gameId = request.params.id;
     const body: any = request.body;
-
     const ad = await prisma.ad.create({
         data: {
             gameId,
@@ -35,7 +36,7 @@ app.post('/games/:id/ads', async (request, response) => {
             yearsPlayings: body.yearsPlayings,
             discord: body.discord,
             weekDays: body.weekDays.join(','),
-            hourStart: convertHourStringToMinutes(body.hourStart),
+            hourStart: convertHourStringToMinutes(body.hourStart),            
             hourEnd: convertHourStringToMinutes(body.hourEnd),
             useVoiceChannel: body.useVoiceChannel,
         }
